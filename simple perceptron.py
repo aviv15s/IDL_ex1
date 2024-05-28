@@ -24,7 +24,6 @@ class NeuralNetwork(nn.Module):
         self.flatten = nn.Flatten()
         self.linear_relu_stack = nn.Sequential(
             nn.Linear(20*9, 20*9),
-            # nn.Linear(LEN_WORD * MAX_NUM_LETTERS, 512),
             nn.ReLU(),
             nn.Linear(20*9, 20*9),
             nn.ReLU(),
@@ -63,8 +62,9 @@ def test_module(dataloader, model, loss_fn):
         for X, y in dataloader:
             X, y = X.to(device), y.to(device)
             pred = model(X)
+            pred = nn.Softmax(dim=1)(pred)
             test_loss += loss_fn(pred, y).item()
-            correct += (pred.argmax(1) == y).type(torch.float).sum().item()
+            correct += (pred.argmax(1) == y.argmax(1)).type(torch.float).sum().item()
     test_loss /= num_batches
     correct /= size
     print(f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
