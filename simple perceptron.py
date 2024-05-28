@@ -11,6 +11,9 @@ device = (
     else "cpu"
 )
 
+MAX_NUM_LETTERS = 20
+LEN_WORD = 9
+
 class NeuralNetwork(nn.Module):
     def __init__(self):
         super().__init__()
@@ -29,7 +32,7 @@ class NeuralNetwork(nn.Module):
         return logits
 
 
-def train(dataloader, model, loss_function, optimizer):
+def train_module(dataloader, model, loss_function, optimizer):
     size = len(dataloader.dataset)
     model.train()
     for batch, (X, y) in enumerate(dataloader):
@@ -46,7 +49,7 @@ def train(dataloader, model, loss_function, optimizer):
             print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
 
 
-def test(dataloader, model, loss_fn):
+def test_module(dataloader, model, loss_fn):
     size = len(dataloader.dataset)
     num_batches = len(dataloader)
     model.eval()
@@ -71,6 +74,6 @@ if __name__ == "__main__":
     epochs = 5
     for t in range(epochs):
         print(f"Epoch {t + 1}\n-------------------------------")
-        train(train_dataloader, model, loss_fn, optimizer)
-        test(test_dataloader, model, loss_fn)
+        train_module(train_dataloader, model, loss_fn, optimizer)
+        test_module(test_dataloader, model, loss_fn)
     print("Done!")

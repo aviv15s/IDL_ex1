@@ -7,8 +7,7 @@ from sklearn.model_selection import train_test_split
 from torch import nn
 from torch.utils.data import TensorDataset, DataLoader
 
-MAX_NUM_LETTERS = 20
-LEN_WORD = 9
+
 unique_letters = ['A', 'R', 'D', 'N', 'C', 'Q', 'E', 'G', 'H', 'I',
                   'L', 'K', 'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V']
 
@@ -24,27 +23,6 @@ def create_tensor(file_path: str):
     list_words = numpy.array(list_words)
     tensor = Fun.one_hot(torch.Tensor(list_words).to(torch.int64), num_classes=MAX_NUM_LETTERS)
     return tensor
-
-
-
-
-def train(dataloader, model, loss_fn, optimizer):
-    size = len(dataloader.dataset)
-    model.train()
-    for batch, (X, y) in enumerate(dataloader):
-        X, y = X.to(device), y.to(device)
-
-        pred = model(X)
-        loss = loss_fn(pred, y)
-
-        loss.backward()
-        optimizer.step()
-        optimizer.zero_grad()
-
-        if batch % 100 == 0:
-            loss, current = loss.item()
-            print(f"loss: {loss:>7f}")
-
 
 def get_dataloaders():
     device = ("cuda"
