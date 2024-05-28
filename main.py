@@ -49,7 +49,7 @@ def get_dataloaders(neg_path, pos_path):
     pos_tensor = create_tensor(pos_path)
     pos_labels = torch.cat((torch.ones(len(pos_tensor), 1), torch.zeros(len(pos_tensor),1)),dim=1)
 
-    # to make the same amount of positive samples and splitting data
+    # to make around the same amount of positive samples and splitting data
     pos_tensor_extended = pos_tensor.repeat(6,1,1)
     pos_labels_extended = pos_labels.repeat(6,1)
     dataset = torch.cat([pos_tensor_extended, neg_tensor],dim=0)
