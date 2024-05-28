@@ -14,6 +14,11 @@ unique_letters = ['A', 'R', 'D', 'N', 'C', 'Q', 'E', 'G', 'H', 'I',
                   'L', 'K', 'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V']
 
 def create_tensor(file_path: str):
+    """
+
+    :param file_path:
+    :return:
+    """
     with open(file_path, 'r') as file:
         f = file.readlines()
     le = preprocessing.LabelEncoder()
@@ -28,8 +33,10 @@ def create_tensor(file_path: str):
     return tensor
 
 def get_dataloaders():
-    device = ("cuda"
-              if torch.cuda.is_available() else "cpu")
+    """
+    create Dataloaders load the data from the files and put it with the needed labels
+    :return:
+    """
     neg_path = 'neg_A0201.txt'
     pos_path = 'pos_A0201.txt'
 
