@@ -34,8 +34,8 @@ def create_tensor(file_path: str):
 
 def get_dataloaders():
     """
-    create Dataloaders load the data from the files and put it with the needed labels
-    :return:
+    Create Dataloaders from the specified files and put it with the needed labels
+    :return: dataloaders for train and test
     """
     neg_path = 'neg_A0201.txt'
     pos_path = 'pos_A0201.txt'
