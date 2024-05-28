@@ -62,7 +62,6 @@ def test_module(dataloader, model, loss_fn):
         for X, y in dataloader:
             X, y = X.to(device), y.to(device)
             pred = model(X)
-            pred = nn.Softmax(dim=1)(pred)
             test_loss += loss_fn(pred, y).item()
             correct += (pred.argmax(1) == y.argmax(1)).type(torch.float).sum().item()
     test_loss /= num_batches
@@ -96,9 +95,9 @@ if __name__ == "__main__":
     # train_dataloader, test_dataloader = main.get_dataloaders()
     model = NeuralNetwork().to(device)
     loss_fn = nn.CrossEntropyLoss()
-    optimizer = torch.optim.SGD(model.parameters(), lr=1e-3)
+    optimizer = torch.optim.SGD(model.parameters(), lr=5e-2)
 
-    epochs = 5
+    epochs = 50
     for t in range(epochs):
         print(f"Epoch {t + 1}\n-------------------------------")
         train_module(train_dataloader, model, loss_fn, optimizer)
