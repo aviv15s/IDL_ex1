@@ -9,7 +9,7 @@ from torch.utils.data import TensorDataset, DataLoader
 
 MAX_NUM_LETTERS = 20
 LEN_WORD = 9
-
+BATCH_SIZE = 64
 unique_letters = ['A', 'R', 'D', 'N', 'C', 'Q', 'E', 'G', 'H', 'I',
                   'L', 'K', 'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V']
 
@@ -59,9 +59,8 @@ def get_dataloaders(neg_path, pos_path):
     # creation of the dataloader itself
     train_dataset = TensorDataset(X_train,y_train)
     test_dataset = TensorDataset(X_test, y_test)
-    batch = 64
-    train_dataloader = DataLoader(train_dataset, batch_size=batch, shuffle=True)
-    test_dataloader = DataLoader(test_dataset, batch_size=batch, shuffle=True)
+    train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
+    test_dataloader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=True)
 
     return train_dataloader, test_dataloader
 
