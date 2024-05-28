@@ -68,7 +68,18 @@ def test_module(dataloader, model, loss_fn):
     correct /= size
     print(f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
 
+def parse_name_files_from_tar(name_tar):
+    import tarfile
 
+    # Open the tar file (use 'r:gz' for gzip, 'r:bz2' for bzip2, or 'r:xz' for xz compressed tar files)
+    with tarfile.open('example.tar.gz', 'r:gz') as tar:
+        # List all members in the tar file
+        for member in tar.getmembers():
+            print(member.name)
+
+        # Extract a specific file
+        file_to_extract = 'path/inside/tar/file.txt'
+        extracted_file = tar.extractfile(file_to_extract)
 if __name__ == "__main__":
     # training_data = datasets.FashionMNIST(
     #     root="data",

@@ -63,4 +63,3 @@ def get_dataloaders(neg_path, pos_path):
     test_dataloader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=True)
 
     return train_dataloader, test_dataloader
-
