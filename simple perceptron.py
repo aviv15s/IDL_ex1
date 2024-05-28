@@ -1,10 +1,7 @@
-import torch
-from scipy import datasets
-from torch import nn
-from torch.utils.data import DataLoader
-from torchvision import datasets
-from torchvision.transforms import ToTensor
 import matplotlib.pyplot as plt
+import torch
+from torch import nn
+
 import dataloader_creator
 
 MAX_NUM_LETTERS = 20
@@ -18,6 +15,7 @@ device = (
     if torch.backends.mps.is_available()
     else "cpu"
 )
+
 
 class OverfittingModel(nn.Module):
     """
@@ -55,7 +53,6 @@ class OverfittingModel(nn.Module):
         return logits
 
 
-
 class NonOverfittingModel(nn.Module):
     """
     A neural network model designed to avoid overfitting on a classification task.
@@ -75,6 +72,7 @@ class NonOverfittingModel(nn.Module):
     forward(x):
         Defines the forward pass of the model.
     """
+
     def __init__(self):
         super().__init__()
         self.flatten = nn.Flatten()
@@ -147,6 +145,7 @@ def test_module(dataloader, model, loss_fn):
     correct /= size
     return test_loss
 
+
 def plot_epochs_loss(train_loss_list, test_loss_list):
     """
     Plot the training and test loss per epoch.
@@ -157,8 +156,8 @@ def plot_epochs_loss(train_loss_list, test_loss_list):
         List of test loss values per epoch.
     :return: None
     """
-    plt.plot(list(range(1, len(train_loss_list)+1)), train_loss_list, label='train loss')
-    plt.plot(list(range(1, len(test_loss_list)+1)), test_loss_list, label='test loss')
+    plt.plot(list(range(1, len(train_loss_list) + 1)), train_loss_list, label='train loss')
+    plt.plot(list(range(1, len(test_loss_list) + 1)), test_loss_list, label='test loss')
     plt.xlabel("# epoch")
     plt.ylabel('loss [arb]')
     plt.title("Train and Test loss per epoch")
@@ -166,8 +165,9 @@ def plot_epochs_loss(train_loss_list, test_loss_list):
     plt.legend()
     plt.show()
 
+
 if __name__ == "__main__":
-    train_dataloader, test_dataloader = dataloader_creator.get_dataloaders('neg_A0201.txt','pos_A0201.txt')
+    train_dataloader, test_dataloader = dataloader_creator.get_dataloaders('neg_A0201.txt', 'pos_A0201.txt')
     model = NonOverfittingModel().to(device)
     loss_fn = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=5e-2)
