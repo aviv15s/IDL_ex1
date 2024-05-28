@@ -34,16 +34,16 @@ def get_dataloaders():
     pos_path = 'pos_A0201.txt'
 
     neg_tensor = create_tensor(neg_path)
-    neg_labels = torch.zeros(len(neg_tensor))
+    neg_labels = torch.cat((torch.zeros(len(neg_tensor),1),torch.ones(len(neg_tensor),1)), dim=1)
     pos_tensor = create_tensor(pos_path)
-    pos_labels = torch.ones(len(pos_tensor))
+    pos_labels = torch.cat((torch.ones(len(pos_tensor), 1), torch.zeros(len(pos_tensor),1)),dim=1)
 
     # to make the same amount of samples
     pos_tensor_extended = pos_tensor.repeat(6,1,1)
-    pos_labels_extended = pos_labels.repeat(6)
+    pos_labels_extended = pos_labels.repeat(6,1)
 
-    dataset = torch.cat([pos_tensor_extended, neg_tensor])
-    labels = torch.cat([pos_labels_extended, neg_labels])
+    dataset = torch.cat([pos_tensor_extended, neg_tensor],dim=0)
+    labels = torch.cat([pos_labels_extended, neg_labels],dim=0)
     X_train, X_test, y_train, y_test = train_test_split(dataset, labels, test_size=0.1, shuffle=True)
     train_dataset = TensorDataset(X_train,y_train)
     test_dataset = TensorDataset(X_test, y_test)
