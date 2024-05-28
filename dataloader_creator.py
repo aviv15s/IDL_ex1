@@ -4,7 +4,6 @@ import torch.cuda
 import torch.nn.functional as Fun
 from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
-from torch import nn
 from torch.utils.data import TensorDataset, DataLoader
 
 MAX_NUM_LETTERS = 20
@@ -39,8 +38,6 @@ def get_dataloaders(neg_path, pos_path):
     Create Dataloaders from the specified files and put it with the needed labels.
     :return: dataloaders for train and test
     """
-    neg_path = 'neg_A0201.txt'
-    pos_path = 'pos_A0201.txt'
 
     # creation of base tensors
     neg_tensor = create_tensor(neg_path)
