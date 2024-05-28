@@ -33,15 +33,14 @@ def create_tensor(file_path: str):
     return tensor
 
 def get_dataloaders(neg_path, pos_path):
-
     """
     :param neg_path: file path in with the negative patience are
     :param pos_path: file path in with the positive patience are
     Create Dataloaders from the specified files and put it with the needed labels.
     :return: dataloaders for train and test
     """
-    # neg_path = 'neg_A0201.txt'
-    # pos_path = 'pos_A0201.txt'
+    neg_path = 'neg_A0201.txt'
+    pos_path = 'pos_A0201.txt'
 
     # creation of base tensors
     neg_tensor = create_tensor(neg_path)
