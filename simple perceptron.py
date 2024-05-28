@@ -43,9 +43,7 @@ def train_module(dataloader, model, loss_function, optimizer):
     for batch, (X, y) in enumerate(dataloader):
         X, y = X.to(device), y.to(device)
         pred = model(X)
-        pred_probab = nn.Softmax(dim=1)(pred)
-        y_pred = pred_probab.argmax(1)
-        loss = loss_function(y_pred, y)
+        loss = loss_function(pred, y)
 
         loss.backward()
         optimizer.step()
