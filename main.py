@@ -5,7 +5,7 @@ import torch.nn.functional as Fun
 from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
 from torch import nn
-from torch.utils.data import TensorDataset
+from torch.utils.data import TensorDataset, DataLoader
 
 MAX_NUM_LETTERS = 20
 LEN_WORD = 9
@@ -74,12 +74,18 @@ if __name__ == "__main__":
     pos_tensor = create_tensor(pos_path)
     pos_labels = torch.ones(len(pos_tensor))
 
-    # TensorDataset
-    # dataset = torch.utils.data.ConcatDataset([neg_tensor, pos_tensor])
-    # labels = torch.utils.data.ConcatDataset([neg_labels, pos_labels])
+    # to make the same amount of samples
+    pos_tensor_extended = pos_tensor * 6
+    pos_labels_extended = pos_labels * 6
 
+    dataset = pos_tensor_extended + neg_tensor
+    labels = pos_labels_extended + neg_labels
     X_train, X_test, y_train, y_test = train_test_split(dataset, labels, test_size=0.1, shuffle=True)
-
+    train_dataset = TensorDataset(X_train,y_train)
+    test_dataset = TensorDataset(X_test, y_test)
+    batch = 64
+    train_dataloader = DataLoader(train_dataset, batch_size=batch, shuffle=True)
+    test_dataloader = DataLoader(test_dataset, batch_size=batch, shuffle=True)
 
 
     # TensorDataset(train, labeltessor)
