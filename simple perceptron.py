@@ -2,6 +2,7 @@ import torch
 from scipy import datasets
 from torch import nn
 from torch.utils.data import DataLoader
+from torchvision import datasets
 from torchvision.transforms import ToTensor
 
 import main
@@ -20,14 +21,14 @@ LEN_WORD = 9
 class NeuralNetwork(nn.Module):
     def __init__(self):
         super().__init__()
-        self.flatten = nn.Flatten
+        self.flatten = nn.Flatten()
         self.linear_relu_stack = nn.Sequential(
-            nn.Linear(28*28, 512),
+            nn.Linear(20*9, 20*9),
             # nn.Linear(LEN_WORD * MAX_NUM_LETTERS, 512),
             nn.ReLU(),
-            nn.Linear(512, 512),
+            nn.Linear(20*9, 20*9),
             nn.ReLU(),
-            nn.Linear(512, 10)
+            nn.Linear(20*9, 2)
         )
 
     def forward(self, x):
@@ -42,7 +43,9 @@ def train_module(dataloader, model, loss_function, optimizer):
     for batch, (X, y) in enumerate(dataloader):
         X, y = X.to(device), y.to(device)
         pred = model(X)
-        loss = loss_function(pred, y)
+        pred_probab = nn.Softmax(dim=1)(pred)
+        y_pred = pred_probab.argmax(1)
+        loss = loss_function(y_pred, y)
 
         loss.backward()
         optimizer.step()
@@ -84,15 +87,16 @@ if __name__ == "__main__":
     #     download=True,
     #     transform=ToTensor(),
     # )
-    #
-    # batch_size = 64
-    #
-    # # Create data loaders.
+
+    batch_size = 64
+    train_dataloader, test_dataloader = main.get_dataloaders()
+    # Create data loaders.
     # train_dataloader = DataLoader(training_data, batch_size=batch_size)
     # test_dataloader = DataLoader(test_data, batch_size=batch_size)
 
-    train_dataloader, test_dataloader = main.get_dataloaders()
-    model = NeuralNetwork()
+
+    # train_dataloader, test_dataloader = main.get_dataloaders()
+    model = NeuralNetwork().to(device)
     loss_fn = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=1e-3)
 

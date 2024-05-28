@@ -24,6 +24,7 @@ def create_tensor(file_path: str):
         list_words.append(le.transform(list(row.strip())))
     list_words = numpy.array(list_words)
     tensor = Fun.one_hot(torch.Tensor(list_words).to(torch.int64), num_classes=MAX_NUM_LETTERS)
+    tensor=tensor.to(torch.float32)
     return tensor
 
 def get_dataloaders():
