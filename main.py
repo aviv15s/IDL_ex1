@@ -26,22 +26,6 @@ def create_tensor(file_path: str):
     return tensor
 
 
-class NeuralNetwork(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.flatten = nn.Flatten
-        self.linear_relu_stack = nn.Sequential(
-            nn.Linear(LEN_WORD * MAX_NUM_LETTERS, 512),
-            nn.ReLU(),
-            nn.Linear(512, 512),
-            nn.ReLU(),
-            nn.Linear(512, 2)
-        )
-
-    def forward(self, x):
-        x = self.flatten(x)
-        logits = self.linear_relu_stack(x)
-        return logits
 
 
 def train(dataloader, model, loss_fn, optimizer):
@@ -62,10 +46,9 @@ def train(dataloader, model, loss_fn, optimizer):
             print(f"loss: {loss:>7f}")
 
 
-if __name__ == "__main__":
+def get_dataloaders():
     device = ("cuda"
               if torch.cuda.is_available() else "cpu")
-    model = NeuralNetwork().to(device)
     neg_path = 'neg_A0201.txt'
     pos_path = 'pos_A0201.txt'
 
@@ -91,13 +74,5 @@ if __name__ == "__main__":
     # TensorDataset(train, labeltessor)
     # DataLoader(TEnsordats)
 
-    loss_fn = nn.CrossEntropyLoss()
-    optimizer = torch.optim.SGD(model.parameters())
-
-    epochs =5
-    for t in range(epochs):
-        print(f"Epoch {t+1}\n________")
-        train(train_dataloader,model,loss_fn,optimizer)
-        test(test_dataloader, model, loss_fn)
-
+    return train_dataloader, test_dataloader
 
