@@ -7,6 +7,8 @@ from sklearn.model_selection import train_test_split
 from torch import nn
 from torch.utils.data import TensorDataset, DataLoader
 
+MAX_NUM_LETTERS = 20
+LEN_WORD = 9
 
 unique_letters = ['A', 'R', 'D', 'N', 'C', 'Q', 'E', 'G', 'H', 'I',
                   'L', 'K', 'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V']
@@ -39,8 +41,8 @@ def get_dataloaders():
     pos_tensor_extended = pos_tensor * 6
     pos_labels_extended = pos_labels * 6
 
-    dataset = pos_tensor_extended + neg_tensor
-    labels = pos_labels_extended + neg_labels
+    dataset = torch.cat([pos_tensor_extended, neg_tensor])
+    labels = torch.cat([pos_labels_extended, neg_labels])
     X_train, X_test, y_train, y_test = train_test_split(dataset, labels, test_size=0.1, shuffle=True)
     train_dataset = TensorDataset(X_train,y_train)
     test_dataset = TensorDataset(X_test, y_test)
