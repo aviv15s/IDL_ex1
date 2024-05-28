@@ -1,5 +1,8 @@
 import torch
+from scipy import datasets
 from torch import nn
+from torch.utils.data import DataLoader
+from torchvision.transforms import ToTensor
 
 import main
 
@@ -19,11 +22,12 @@ class NeuralNetwork(nn.Module):
         super().__init__()
         self.flatten = nn.Flatten
         self.linear_relu_stack = nn.Sequential(
-            nn.Linear(LEN_WORD * MAX_NUM_LETTERS, 512),
+            nn.Linear(28*28, 512),
+            # nn.Linear(LEN_WORD * MAX_NUM_LETTERS, 512),
             nn.ReLU(),
             nn.Linear(512, 512),
             nn.ReLU(),
-            nn.Linear(512, 2)
+            nn.Linear(512, 10)
         )
 
     def forward(self, x):
@@ -66,6 +70,27 @@ def test_module(dataloader, model, loss_fn):
 
 
 if __name__ == "__main__":
+    # training_data = datasets.FashionMNIST(
+    #     root="data",
+    #     train=True,
+    #     download=True,
+    #     transform=ToTensor(),
+    # )
+    #
+    # # Download test data from open datasets.
+    # test_data = datasets.FashionMNIST(
+    #     root="data",
+    #     train=False,
+    #     download=True,
+    #     transform=ToTensor(),
+    # )
+    #
+    # batch_size = 64
+    #
+    # # Create data loaders.
+    # train_dataloader = DataLoader(training_data, batch_size=batch_size)
+    # test_dataloader = DataLoader(test_data, batch_size=batch_size)
+
     train_dataloader, test_dataloader = main.get_dataloaders()
     model = NeuralNetwork()
     loss_fn = nn.CrossEntropyLoss()
