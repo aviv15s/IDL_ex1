@@ -69,16 +69,15 @@ class NonOverfittingModel(nn.Module):
     forward(x):
         Defines the forward pass of the model.
     """
-
     def __init__(self):
         super().__init__()
         self.flatten = nn.Flatten()
         self.linear_relu_stack = nn.Sequential(
-            nn.Linear(MAX_NUM_LETTERS * LEN_WORD, 9),
+            nn.Linear(MAX_NUM_LETTERS * LEN_WORD, 20),
             nn.ReLU(),
-            nn.Linear(9, 9),
-            nn.ReLU(),
-            nn.Linear(9, 2)
+            # nn.Linear(9, 9),
+            # nn.ReLU(),
+            nn.Linear(20, 2)
         )
 
     def forward(self, x):
@@ -163,13 +162,44 @@ def plot_epochs_loss(train_loss_list, test_loss_list):
     plt.legend()
     plt.show()
 
+def test_spike_protein(model):
+    file_path = "spike.txt"
+    with open(file_path, 'r') as file:
+        f = file.readlines()
+        protein_data = "".join(["".join(line.split()) for line in f])
+        print(protein_data)
+
+    list_words = [protein_data[i:i + 9] for i in range(len(protein_data) - 9)]
+    dataset = dataloader_creator.word_list_to_tensor(list_words)
+
+    loss = []
+    model.eval()
+    prediction = model(dataset)
+    prediction = nn.Softmax(dim=1)(prediction)
+
+    top3 = []
+    for t in range(3):
+        top_val = 0
+        top_peptide = None
+        for i in range(len(list_words)):
+            peptide = list_words[i]
+            prob = prediction[i][0].item()
+            if prob > top_val and (t > 0 and prob < top3[t-1][1] or t == 0):
+                top_val, top_peptide = prob, peptide
+        top3.append((top_peptide, top_val))
+
+    for index, (peptide, prob) in enumerate(top3):
+        print(f"{index+1}. peptide {peptide} has probability {prob} of being positive")
+
+
+# def run_model(model, train_dataloader, test_dataloader)
+
 
 if __name__ == "__main__":
     train_dataloader, test_dataloader = dataloader_creator.get_dataloaders_after_split('neg_A0201.txt', 'pos_A0201.txt')
-    model = OverfittingModel().to(device)
+    model = NonOverfittingModel().to(device)
     loss_fn = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=5e-3)
-
     train_loss_list, test_loss_list = [], []
     epochs = 500
     for t in range(epochs):
@@ -181,3 +211,4 @@ if __name__ == "__main__":
         print(f'Train loss: {train_loss}, Test loss: {test_loss}')
 
     plot_epochs_loss(train_loss_list, test_loss_list)
+    # torch.save(model.state_dict(), 'model_weights.pth')
