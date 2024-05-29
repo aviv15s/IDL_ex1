@@ -73,11 +73,11 @@ class NonOverfittingModel(nn.Module):
         super().__init__()
         self.flatten = nn.Flatten()
         self.linear_relu_stack = nn.Sequential(
-            nn.Linear(MAX_NUM_LETTERS * LEN_WORD, 20),
+            nn.Linear(MAX_NUM_LETTERS * LEN_WORD, 12),
             nn.ReLU(),
-            # nn.Linear(9, 9),
+            # nn.Linear(8, 5),
             # nn.ReLU(),
-            nn.Linear(20, 2)
+            nn.Linear(12, 2)
         )
 
     def forward(self, x):
@@ -114,7 +114,7 @@ def train_module(dataloader, model, loss_function, optimizer):
     return total_loss / len(dataloader)
 
 
-def test_module(dataloader, model, loss_fn):
+def module_test(dataloader, model, loss_fn):
     """
     Evaluate the model on the test dataset and return the average loss.
 
@@ -162,7 +162,7 @@ def plot_epochs_loss(train_loss_list, test_loss_list):
     plt.legend()
     plt.show()
 
-def test_spike_protein(model):
+def spike_protein_test(model):
     file_path = "spike.txt"
     with open(file_path, 'r') as file:
         f = file.readlines()
@@ -205,7 +205,7 @@ if __name__ == "__main__":
     for t in range(epochs):
         print(f"Epoch {t + 1}\n-------------------------------")
         train_loss = train_module(train_dataloader, model, loss_fn, optimizer)
-        test_loss = test_module(test_dataloader, model, loss_fn)
+        test_loss = module_test(test_dataloader, model, loss_fn)
         train_loss_list.append(train_loss)
         test_loss_list.append(test_loss)
         print(f'Train loss: {train_loss}, Test loss: {test_loss}')
