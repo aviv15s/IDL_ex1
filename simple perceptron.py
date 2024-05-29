@@ -1,12 +1,9 @@
 import matplotlib.pyplot as plt
 import torch
-from torch import nn
-
 import dataloader_creator
+from torch import nn
+from dataloader_creator import MAX_NUM_LETTERS,LEN_WORD,BATCH_SIZE
 
-MAX_NUM_LETTERS = 20
-LEN_WORD = 9
-BATCH_SIZE = 64
 
 device = (
     "cuda"
@@ -143,7 +140,6 @@ def test_module(dataloader, model, loss_fn):
             correct += (pred.argmax(1) == y.argmax(1)).type(torch.float).sum().item()
     test_loss /= num_batches
     correct /= size
-    print(f"accuracy: {accuracy}, precision {precision}, recall {recall}")
     return test_loss
 
 
@@ -169,12 +165,12 @@ def plot_epochs_loss(train_loss_list, test_loss_list):
 
 if __name__ == "__main__":
     train_dataloader, test_dataloader = dataloader_creator.get_dataloaders('neg_A0201.txt', 'pos_A0201.txt')
-    model = NonOverfittingModel().to(device)
+    model = OverfittingModel().to(device)
     loss_fn = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=5e-2)
 
     train_loss_list, test_loss_list = [], []
-    epochs = 50
+    epochs = 500
     for t in range(epochs):
         print(f"Epoch {t + 1}\n-------------------------------")
         train_loss = train_module(train_dataloader, model, loss_fn, optimizer)
