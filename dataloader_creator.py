@@ -2,10 +2,9 @@ import numpy
 import torch
 import torch.cuda
 import torch.nn.functional as Fun
-from torch.utils.data import TensorDataset, DataLoader
 from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
-
+from torch.utils.data import TensorDataset, DataLoader
 
 MAX_NUM_LETTERS = 20
 LEN_WORD = 9
@@ -63,6 +62,14 @@ def get_dataloaders(neg_path, pos_path):
     return train_dataloader, test_dataloader
 
 
+def duplicate_ones(ones_x, ones_y, len):
+    indices = torch.randint(low=0, high=ones_x.size(0), size=(len,))
+    new_tensor_x = ones_x[indices]
+    new_tensor_y = ones_y[indices]
+
+    return new_tensor_x, new_tensor_y
+
+
 def get_dataloaders_after_split(neg_path, pos_path):
     """
     :param neg_path: file path in with the negative patience are
@@ -81,12 +88,13 @@ def get_dataloaders_after_split(neg_path, pos_path):
     dataset = torch.cat([pos_tensor, neg_tensor], dim=0)
     labels = torch.cat([pos_labels, neg_labels], dim=0)
     X_train, X_test, y_train, y_test = train_test_split(dataset, labels, test_size=0.1, shuffle=True)
-    indexes_to_duplicate = torch.multinomial(X_train[y_train==1.0], X_train[y_train == 0.0], replacement=True)
 
-    print(f"need to be deleted: {len( X_train[indexes_to_duplicate])} and we can also see:")
+    X_one_train_duplicate, y_one_train_duplicate = duplicate_ones(X_train[y_train[:, 0] == 1.0],
+                                                                  y_train[y_train[:, 0] == 1.0],
+                                                                  len(X_train[y_train[:, 0] == 0.0]))
 
-    final_X_train = torch.cat([X_train[y_train == 0.0], X_train[indexes_to_duplicate]], dim=0)
-    final_y_train = torch.cat([y_train[y_train == 0.0], y_train[indexes_to_duplicate]], dim=0)
+    final_X_train = torch.cat([X_train[y_train[:, 0] == 0.0], X_one_train_duplicate], dim=0)
+    final_y_train = torch.cat([y_train[y_train[:, 0] == 0.0], y_one_train_duplicate], dim=0)
 
     # creation of the dataloader itself
     train_dataset = TensorDataset(final_X_train, final_y_train)

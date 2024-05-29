@@ -140,6 +140,7 @@ def test_module(dataloader, model, loss_fn):
             correct += (pred.argmax(1) == y.argmax(1)).type(torch.float).sum().item()
     test_loss /= num_batches
     correct /= size
+    print(f"accuracy: {correct}")
     return test_loss
 
 
@@ -164,10 +165,10 @@ def plot_epochs_loss(train_loss_list, test_loss_list):
 
 
 if __name__ == "__main__":
-    train_dataloader, test_dataloader = dataloader_creator.get_dataloaders('neg_A0201.txt', 'pos_A0201.txt')
+    train_dataloader, test_dataloader = dataloader_creator.get_dataloaders_after_split('neg_A0201.txt', 'pos_A0201.txt')
     model = OverfittingModel().to(device)
     loss_fn = nn.CrossEntropyLoss()
-    optimizer = torch.optim.SGD(model.parameters(), lr=5e-2)
+    optimizer = torch.optim.SGD(model.parameters(), lr=5e-3)
 
     train_loss_list, test_loss_list = [], []
     epochs = 500
@@ -177,5 +178,6 @@ if __name__ == "__main__":
         test_loss = test_module(test_dataloader, model, loss_fn)
         train_loss_list.append(train_loss)
         test_loss_list.append(test_loss)
+        print(f'Train loss: {train_loss}, Test loss: {test_loss}')
 
     plot_epochs_loss(train_loss_list, test_loss_list)
