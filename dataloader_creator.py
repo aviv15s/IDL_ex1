@@ -14,7 +14,6 @@ unique_letters = ['A', 'R', 'D', 'N', 'C', 'Q', 'E', 'G', 'H', 'I',
 
 def create_tensor(file_path: str):
     """
-
     :param file_path: to open and cretae tensor of
     :return: tensor one hot encoded
     """

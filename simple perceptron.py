@@ -143,6 +143,7 @@ def test_module(dataloader, model, loss_fn):
             correct += (pred.argmax(1) == y.argmax(1)).type(torch.float).sum().item()
     test_loss /= num_batches
     correct /= size
+    print(f"accuracy: {accuracy}, precision {precision}, recall {recall}")
     return test_loss
 
 
@@ -173,7 +174,7 @@ if __name__ == "__main__":
     optimizer = torch.optim.SGD(model.parameters(), lr=5e-2)
 
     train_loss_list, test_loss_list = [], []
-    epochs = 500
+    epochs = 50
     for t in range(epochs):
         print(f"Epoch {t + 1}\n-------------------------------")
         train_loss = train_module(train_dataloader, model, loss_fn, optimizer)
