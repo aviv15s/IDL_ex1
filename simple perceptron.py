@@ -233,6 +233,7 @@ def plot_model_loss_graph(train_dataloader, test_dataloader, model, loss_fn, opt
 if __name__ == "__main__":
     train_dataloader, test_dataloader = dataloader_creator.get_dataloaders_after_split('neg_A0201.txt', 'pos_A0201.txt')
     loss_fn = nn.CrossEntropyLoss()
+    print("Uncomment the code to run the different sections")
 
     # # 2b
     # overfitting_model = OverfittingModel().to(device)
@@ -247,17 +248,17 @@ if __name__ == "__main__":
     # torch.save(nonOverfitting_model.state_dict(), 'nonOverfitting_model_weights.pth')
 
     # 2d
-    nonOverfittingLinear_model = NonOverfittingLinearModel().to(device)
-    optimizer = torch.optim.SGD(nonOverfittingLinear_model.parameters(), lr=5e-3)
-    plot_model_loss_graph(train_dataloader, test_dataloader, nonOverfittingLinear_model, loss_fn, optimizer)
-    torch.save(nonOverfittingLinear_model.state_dict(), 'nonOverfittingLinear_model_weights.pth')
+    # nonOverfittingLinear_model = NonOverfittingLinearModel().to(device)
+    # optimizer = torch.optim.SGD(nonOverfittingLinear_model.parameters(), lr=5e-3)
+    # plot_model_loss_graph(train_dataloader, test_dataloader, nonOverfittingLinear_model, loss_fn, optimizer)
+    # torch.save(nonOverfittingLinear_model.state_dict(), 'nonOverfittingLinear_model_weights.pth')
 
     # 2e
-    model = NonOverfittingModel().to(device)
-    model.eval()
-    try:
-        model.load_state_dict(torch.load('nonOverfitting_model_weights.pth'))
-    except:
-        print("Need to run code of 2c before running this code section to train model!")
-        exit()
-    spike_protein_test(model)
+    # model = NonOverfittingModel().to(device)
+    # model.eval()
+    # try:
+    #     model.load_state_dict(torch.load('nonOverfitting_model_weights.pth'))
+    # except:
+    #     print("Need to run code of 2c before running this code section to train model!")
+    #     exit()
+    # spike_protein_test(model)
