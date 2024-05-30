@@ -41,36 +41,6 @@ def create_tensor(file_path: str):
 
     return word_list_to_tensor(f)
 
-#
-# def get_dataloaders(neg_path, pos_path):
-#     """
-#     :param neg_path: file path in with the negative patience are
-#     :param pos_path: file path in with the positive patience are
-#     Create Dataloaders from the specified files and put it with the needed labels.
-#     :return: dataloaders for train and test
-#     """
-#
-#     # creation of base tensors
-#     neg_tensor = create_tensor(neg_path)
-#     neg_labels = torch.cat((torch.zeros(len(neg_tensor), 1), torch.ones(len(neg_tensor), 1)), dim=1)
-#     pos_tensor = create_tensor(pos_path)
-#     pos_labels = torch.cat((torch.ones(len(pos_tensor), 1), torch.zeros(len(pos_tensor), 1)), dim=1)
-#
-#     # to make around the same amount of positive samples and splitting data
-#     pos_tensor_extended = pos_tensor.repeat(6, 1, 1)
-#     pos_labels_extended = pos_labels.repeat(6, 1)
-#     dataset = torch.cat([pos_tensor_extended, neg_tensor], dim=0)
-#     labels = torch.cat([pos_labels_extended, neg_labels], dim=0)
-#     X_train, X_test, y_train, y_test = train_test_split(dataset, labels, test_size=0.1, shuffle=True)
-#
-#     # creation of the dataloader itself
-#     train_dataset = TensorDataset(X_train, y_train)
-#     test_dataset = TensorDataset(X_test, y_test)
-#     train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
-#     test_dataloader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=True)
-#
-#     return train_dataloader, test_dataloader
-
 
 def duplicate_ones(ones_x, ones_y, len):
     indices = torch.randint(low=0, high=ones_x.size(0), size=(len,))
@@ -113,37 +83,3 @@ def get_dataloaders_after_split(neg_path, pos_path):
     test_dataloader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=True)
 
     return train_dataloader, test_dataloader
-
-#
-# def get_dataloaders_first_split_then_copy(neg_path, pos_path):
-#     """
-#     :param neg_path: file path in with the negative patience are
-#     :param pos_path: file path in with the positive patience are
-#     Create Dataloaders from the specified files and put it with the needed labels.
-#     :return: dataloaders for train and test
-#     """
-#
-#     # creation of base tensors
-#     neg_tensor = create_tensor(neg_path)
-#     neg_labels = torch.cat((torch.zeros(len(neg_tensor),1),torch.ones(len(neg_tensor),1)), dim=1)
-#     pos_tensor = create_tensor(pos_path)
-#     pos_labels = torch.cat((torch.ones(len(pos_tensor), 1), torch.zeros(len(pos_tensor),1)),dim=1)
-#
-#     factor = 9
-#     X_train_pos, X_test_pos, y_train_pos, y_test_pos = train_test_split(pos_tensor, pos_labels, test_size=0.1, shuffle=True)
-#     X_train_neg, X_test_neg, y_train_neg, y_test_neg = train_test_split(neg_tensor, neg_labels, test_size=0.1, shuffle=True)
-#     X_train_pos, y_train_pos = X_train_pos.repeat(factor,1,1), y_train_pos.repeat(factor,1)
-#     # X_test_pos, y_test_pos = X_test_pos.repeat(6,1,1), y_test_pos.repeat(6,1)
-#
-#     X_train = torch.cat([X_train_neg, X_train_pos],dim=0)
-#     X_test = torch.cat([X_test_neg, X_test_pos],dim=0)
-#     y_train = torch.cat([y_train_neg, y_train_pos],dim=0)
-#     y_test = torch.cat([y_test_neg, y_test_pos],dim=0)
-#
-#     # creation of the dataloader itself
-#     train_dataset = TensorDataset(X_train,y_train)
-#     test_dataset = TensorDataset(X_test, y_test)
-#     train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
-#     test_dataloader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=True)
-#
-#     return train_dataloader, test_dataloader

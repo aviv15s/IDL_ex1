@@ -75,8 +75,38 @@ class NonOverfittingModel(nn.Module):
         self.linear_relu_stack = nn.Sequential(
             nn.Linear(MAX_NUM_LETTERS * LEN_WORD, 12),
             nn.ReLU(),
-            # nn.Linear(8, 5),
-            # nn.ReLU(),
+            nn.Linear(12, 2)
+        )
+
+    def forward(self, x):
+        x = self.flatten(x)
+        logits = self.linear_relu_stack(x)
+        return logits
+
+class NonOverfittingLinearModel(nn.Module):
+    """
+    A neural network model designed to avoid overfitting on a classification task.
+
+    This model consists of a flattening layer followed by a sequence of linear layers
+    with ReLU activations. The architecture is simple to prevent overfitting on small datasets.
+
+    Attributes:
+    -----------
+    flatten : nn.Flatten
+        A layer that flattens the input tensor.
+    linear_relu_stack : nn.Sequential
+        A sequence of linear layers with ReLU activations.
+
+    Methods:
+    --------
+    forward(x):
+        Defines the forward pass of the model.
+    """
+    def __init__(self):
+        super().__init__()
+        self.flatten = nn.Flatten()
+        self.linear_relu_stack = nn.Sequential(
+            nn.Linear(MAX_NUM_LETTERS * LEN_WORD, 12),
             nn.Linear(12, 2)
         )
 
@@ -107,10 +137,10 @@ def train_module(dataloader, model, loss_function, optimizer):
         X, y = X.to(device), y.to(device)
         pred = model(X)
         loss = loss_function(pred, y)
+        total_loss += loss.item()
         loss.backward()
         optimizer.step()
         optimizer.zero_grad()
-        total_loss += loss.item()
     return total_loss / len(dataloader)
 
 
@@ -172,34 +202,21 @@ def spike_protein_test(model):
     list_words = [protein_data[i:i + 9] for i in range(len(protein_data) - 9)]
     dataset = dataloader_creator.word_list_to_tensor(list_words)
 
-    loss = []
     model.eval()
     prediction = model(dataset)
     prediction = nn.Softmax(dim=1)(prediction)
 
-    top3 = []
-    for t in range(3):
-        top_val = 0
-        top_peptide = None
-        for i in range(len(list_words)):
-            peptide = list_words[i]
-            prob = prediction[i][0].item()
-            if prob > top_val and (t > 0 and prob < top3[t-1][1] or t == 0):
-                top_val, top_peptide = prob, peptide
-        top3.append((top_peptide, top_val))
+    peptides_with_probs = [(list_words[i], prediction[i][0].item()) for i in range(len(list_words))]
+    sorted_peptides = sorted(peptides_with_probs, key=lambda x: x[1], reverse=True)
+    top3 = sorted_peptides[:3]
 
     for index, (peptide, prob) in enumerate(top3):
-        print(f"{index+1}. peptide {peptide} has probability {prob} of being positive")
+        print(f"{index + 1}. peptide {peptide} has probability {prob} of being positive")
 
 
 # def run_model(model, train_dataloader, test_dataloader)
 
-
-if __name__ == "__main__":
-    train_dataloader, test_dataloader = dataloader_creator.get_dataloaders_after_split('neg_A0201.txt', 'pos_A0201.txt')
-    model = NonOverfittingModel().to(device)
-    loss_fn = nn.CrossEntropyLoss()
-    optimizer = torch.optim.SGD(model.parameters(), lr=5e-3)
+def plot_model_loss_graph(train_dataloader, test_dataloader, model, loss_fn, optimizer):
     train_loss_list, test_loss_list = [], []
     epochs = 500
     for t in range(epochs):
@@ -211,4 +228,36 @@ if __name__ == "__main__":
         print(f'Train loss: {train_loss}, Test loss: {test_loss}')
 
     plot_epochs_loss(train_loss_list, test_loss_list)
-    # torch.save(model.state_dict(), 'model_weights.pth')
+
+
+if __name__ == "__main__":
+    train_dataloader, test_dataloader = dataloader_creator.get_dataloaders_after_split('neg_A0201.txt', 'pos_A0201.txt')
+    loss_fn = nn.CrossEntropyLoss()
+
+    # # 2b
+    # overfitting_model = OverfittingModel().to(device)
+    # optimizer = torch.optim.SGD(overfitting_model.parameters(), lr=5e-3)
+    # plot_model_loss_graph(train_dataloader, test_dataloader, overfitting_model, loss_fn, optimizer)
+    # torch.save(overfitting_model.state_dict(), 'overfitting_model_weights.pth')
+
+    # 2c
+    # nonOverfitting_model = NonOverfittingModel().to(device)
+    # optimizer = torch.optim.SGD(nonOverfitting_model.parameters(), lr=5e-3)
+    # plot_model_loss_graph(train_dataloader, test_dataloader, nonOverfitting_model, loss_fn, optimizer)
+    # torch.save(nonOverfitting_model.state_dict(), 'nonOverfitting_model_weights.pth')
+
+    # 2d
+    nonOverfittingLinear_model = NonOverfittingLinearModel().to(device)
+    optimizer = torch.optim.SGD(nonOverfittingLinear_model.parameters(), lr=5e-3)
+    plot_model_loss_graph(train_dataloader, test_dataloader, nonOverfittingLinear_model, loss_fn, optimizer)
+    torch.save(nonOverfittingLinear_model.state_dict(), 'nonOverfittingLinear_model_weights.pth')
+
+    # 2e
+    model = NonOverfittingModel().to(device)
+    model.eval()
+    try:
+        model.load_state_dict(torch.load('nonOverfitting_model_weights.pth'))
+    except:
+        print("Need to run code of 2c before running this code section to train model!")
+        exit()
+    spike_protein_test(model)
