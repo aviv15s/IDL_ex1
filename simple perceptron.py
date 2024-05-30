@@ -197,7 +197,6 @@ def spike_protein_test(model):
     with open(file_path, 'r') as file:
         f = file.readlines()
         protein_data = "".join(["".join(line.split()) for line in f])
-        print(protein_data)
 
     list_words = [protein_data[i:i + 9] for i in range(len(protein_data) - 9)]
     dataset = dataloader_creator.word_list_to_tensor(list_words)
